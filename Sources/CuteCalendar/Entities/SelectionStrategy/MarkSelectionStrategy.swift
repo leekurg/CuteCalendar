@@ -1,13 +1,13 @@
 //
-//  SingleSelectionStrategy.swift
+//  MarkSelectionStrategy.swift
 //  CuteCalendar
 //
-//  Created by Илья Аникин on 18.02.2026.
+//  Created by Илья Аникин on 19.02.2026.
 //
 
 import Foundation
 
-public struct SingleSelectionStrategy: SelectionStrategy {
+public struct MarkSelectionStrategy: SelectionStrategy {
     public func select(_ date: Date, in selection: DateIntervalSelection) -> DateIntervalSelection {
         DateIntervalSelection(start: date)
     }
@@ -17,10 +17,10 @@ public struct SingleSelectionStrategy: SelectionStrategy {
     }
     
     public func style(for date: Date, in selection: DateIntervalSelection) -> SelectionStyle {
-        selection.contains(date) ? .edgeAlone : .none
+        return .none
     }
 }
 
-public extension SelectionStrategy where Self == SingleSelectionStrategy {
-    static var single: Self { Self() }
+public extension SelectionStrategy where Self == MarkSelectionStrategy {
+    static var mark: Self { Self() }
 }

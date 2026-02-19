@@ -1,6 +1,6 @@
 //
-//  EnvironmentValues.swift
-//  
+//  Environment+.swift
+//
 //
 //  Created by Илья Аникин on 27.03.2024.
 //
@@ -49,8 +49,19 @@ public extension View {
     }
     
     /// Overrides mark style for **CuteCalendar**.
-    func cuteMarksStyle(_ style: CuteCalendarConfig.Mark) -> some View {
-        environment(\.cuteCalendar.mark, style)
+    func cuteMarks(
+        color: Color? = nil,
+        diameter: Double? = nil,
+        topPadding: Double? = nil
+    ) -> some View {
+        environment(
+            \.cuteCalendar.mark,
+             .init(
+                color: color ?? CuteCalendarConfig.Mark.default.color,
+                diameter: diameter ?? CuteCalendarConfig.Mark.default.diameter,
+                topPadding: topPadding ?? CuteCalendarConfig.Mark.default.topPadding
+             )
+        )
     }
 }
 
@@ -81,10 +92,15 @@ public struct CuteCalendarConfig {
             Self(colors: .default, animation: nil)
         }
         
+        public init(colors: Colors, animation: Animation? = nil) {
+            self.colors = colors
+            self.animation = animation
+        }
+        
         public struct Colors {
-            public let primary: Color
-            public let secondary: Color
-            public let text: Color
+            public var primary: Color
+            public var secondary: Color
+            public var text: Color
             
             static var `default`: Self {
                 Self(
@@ -92,6 +108,12 @@ public struct CuteCalendarConfig {
                     secondary: .gray.opacity(0.3),
                     text: .white
                 )
+            }
+            
+            public init(primary: Color, secondary: Color, text: Color) {
+                self.primary = primary
+                self.secondary = secondary
+                self.text = text
             }
         }
     }
@@ -101,7 +123,12 @@ public struct CuteCalendarConfig {
         public var end: LocalizedStringKey
         
         static var `default`: Self {
-            Self(start: "-", end: "-")
+            Self(start: "***", end: "***")
+        }
+        
+        public init(start: LocalizedStringKey, end: LocalizedStringKey) {
+            self.start = start
+            self.end = end
         }
     }
     
@@ -112,6 +139,12 @@ public struct CuteCalendarConfig {
         
         static var `default`: Self {
             Self(color: .red, diameter: 5, topPadding: 5)
+        }
+        
+        public init(color: Color, diameter: Double, topPadding: Double) {
+            self.color = color
+            self.diameter = diameter
+            self.topPadding = topPadding
         }
     }
 }

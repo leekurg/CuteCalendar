@@ -12,6 +12,7 @@ fileprivate struct SelectionStyleModifier: ViewModifier {
 
     private let edgePadding: CGFloat = 2
 
+    @Environment(\.cuteCalendar.tintColor) var tintColor
     @Environment(\.cuteCalendar.selection.colors) var colors
 
     func body(content: Content) -> some View {
@@ -55,7 +56,7 @@ fileprivate struct SelectionStyleModifier: ViewModifier {
                         .aspectRatio(1, contentMode: .fit)
                 }
             }
-            .cuteTintColor(style.isEdge ? colors.text : nil)
+            .foregroundStyle(style.isEdge ? colors.text : tintColor)
             .fontWeight(style.isEdge ? .bold : nil)
     }
 }

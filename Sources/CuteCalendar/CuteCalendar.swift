@@ -23,7 +23,7 @@ public struct CuteCalendarView: View {
         selectableDates: DateInterval?,
         selectionStrategy: SelectionStrategy = .range,
         selectionStart: Binding<Date?>,
-        selectionEnd: Binding<Date?>,
+        selectionEnd: Binding<Date?> = .constant(nil),
         markedDates: OrderedSet<Date> = [],
         calendar: Calendar = .localizedCurrent
     ) {

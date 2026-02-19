@@ -92,7 +92,7 @@ fileprivate struct ProxyView: View {
     )!
     
     @State var selection: DateIntervalSelection = .init()
-    let strategy: SelectionStrategy = .none
+    let strategy: SelectionStrategy = .single
     
     var body: some View {
         MonthView(

@@ -11,7 +11,7 @@ struct DayView: View {
     let presentableDay: PresentableDay
     let fontSize: CGFloat
     let action: (Date) -> Void
-    @Environment(\.cuteCalendar.tintColor) var tintColor
+
     @Environment(\.cuteCalendar.selection.colors.primary) var selectionColor
 
     init(day presentebleDay: PresentableDay, fontSize: CGFloat, action: @escaping (Date) -> Void) {
@@ -34,7 +34,6 @@ struct DayView: View {
                 Text("00").hidden()
             }
         }
-        .foregroundColor(tintColor)
         .lineLimit(1)
         .onTapGesture {
             guard presentableDay.isSelectable else { return }
@@ -58,6 +57,5 @@ struct DayView: View {
 
 #Preview {
     DayView(day: .regular(Day(date: .now)), fontSize: 16) { _ in }
-        .cuteTintColor(.blue)
         .border(.red)
 }

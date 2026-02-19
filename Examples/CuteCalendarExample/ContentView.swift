@@ -10,30 +10,82 @@ import OrderedCollections
 import SwiftUI
 
 struct ContentView: View {
-    @State var startDate: Date? = .now.firstDayOfMonth()
-    @State var endDate: Date? = nil
+    @State var startDate: Date?
+    @State var endDate: Date?
+    
+    @State var markedDate: Date?
     @State var markedDates: OrderedSet<Date> = []
     
     @State var isCalendarShowing: CalendarSelectMode?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
+            selecting
+            
+            Divider()
+            
+            marking
+        }
+        .padding(.horizontal)
+        .sheet(item: $isCalendarShowing) { mode in
+            NavigationStack {
+                CuteCalendarView(
+                    presentableDates: Date.now.yearInterval()!,
+                    selectableDates: Date.now.monthInterval(),
+                    selectionStrategy: mode == .select ? .range : .mark,
+                    selectionStart: mode == .select ? $startDate : $markedDate,
+                    selectionEnd: $endDate,
+                    markedDates: markedDates,
+                    calendar: .localizedCurrent
+                )
+                .cuteTintColor(.indigo)
+                .cuteSelectionColors(
+                    primary: .brown,
+                    secondary: .brown.opacity(0.2),
+                    text: .green
+                )
+                .cuteMarks(color: .green, diameter: 7, topPadding: 3)
+                .cuteSelectionAnimation(.easeInOut(duration: 0.2))
+                .cuteCalendarConfig { config in
+                    config.labels = .init(start: "-", end: "-")
+                }
+                .navigationTitle(mode == .select ? "Select dates" : "Mark dates")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Close") {
+                            isCalendarShowing = nil
+                        }
+                    }
+                }
+            }
+            .onChange(of: markedDate) { date in
+                if mode == .mark, let date {
+                    handleSelectedMark(date)
+                }
+            }
+        }
+    }
+    
+    private var selecting: some View {
+        VStack(spacing: 0) {
             VStack {
                 VStack(alignment: .leading) {
                     Text("Selected dates:").font(.title2)
                     Text("Start: \(startDate?.formatted(date: .numeric, time: .standard) ?? "-")")
                     Text("End: \(endDate?.formatted(date: .numeric, time: .standard) ?? "-")")
                 }
-                
             }
+
             Button("Select") {
                 isCalendarShowing = .select
             }
             .buttonStyle(.borderedProminent)
             .frame(maxWidth: .infinity)
-            
-            Divider()
-            
+        }
+    }
+    
+    private var marking: some View {
+        VStack(spacing: 0) {
             VStack {
                 VStack(alignment: .leading) {
                     Text("Marked dates:").font(.title2)
@@ -53,33 +105,6 @@ struct ContentView: View {
             }
             .buttonStyle(.borderedProminent)
             .frame(maxWidth: .infinity)
-        }
-        .padding(.horizontal)
-        .sheet(item: $isCalendarShowing) { mode in
-            NavigationStack {
-                CuteCalendarView(
-                    presentableDates: Date.now.yearInterval()!,
-                    selectableDates: Date.now.monthInterval(),
-                    selectionStrategy: mode == .select ? .range : .single(behaviour: .silent),
-                    selectionStart: $startDate,
-                    selectionEnd: $endDate,
-                    markedDates: markedDates,
-                    calendar: .localizedCurrent
-                )
-                .navigationTitle(mode == .select ? "Select dates" : "Mark dates")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Close") {
-                            isCalendarShowing = nil
-                        }
-                    }
-                }
-            }
-            .onChange(of: startDate) { date in
-                if mode == .mark, let date {
-                    handleSelectedMark(date)
-                }
-            }
         }
     }
     
@@ -101,4 +126,5 @@ enum CalendarSelectMode: String, Identifiable {
 
 #Preview {
     ContentView()
+        .preferredColorScheme(.dark)
 }
